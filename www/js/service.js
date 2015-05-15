@@ -14,17 +14,16 @@ function soap() {
 var xmlhttp = new XMLHttpRequest();
     xmlhttp.open('POST','http://localhost:8080/benabides/webServer/index.php', true);
     var sr =
-        '<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:emailwsdl">'+
+        '<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:coordenadaswsdl">'+
         '<soapenv:Header/>'+
         '<soapenv:Body>'+
-           '<urn:ValidarEmail soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">'+
-              '<id xsi:type="xsd:string">2</id>'+
-              '<nombre xsi:type="xsd:string">'+nombres+'</nombre>'+
-              '<email xsi:type="xsd:string">'+cordenadas+'</email>'+
-              '</urn:ValidarEmail>'+
+           '<urn:guardarCoordenadas soapenv:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">'+
+              '<idNick xsi:type="xsd:string">'+idNick+'</idNick>'+
+              '<longitud xsi:type="xsd:string">'+nombres+'</longitud>'+
+              '<latitud xsi:type="xsd:string">'+cordenadas+'</latitud>'+
+              '</urn:guardarCoordenadas>'+
         '</soapenv:Body>'+
      '</soapenv:Envelope>';
-
     xmlhttp.onreadystatechange = function () {
       if (xmlhttp.readyState === 4) {
         if (xmlhttp.status === 200) {
@@ -36,6 +35,4 @@ var xmlhttp = new XMLHttpRequest();
     // Send the POST request
     xmlhttp.setRequestHeader('Content-Type', 'text/xml');
     xmlhttp.send(sr);
-    // send request
-    // ...
 }
