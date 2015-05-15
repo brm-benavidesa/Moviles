@@ -13,6 +13,7 @@ function soap() {
   var cordenadas = new Array('cordefa','cordean','cordesa','cordeli');
 var xmlhttp = new XMLHttpRequest();
     xmlhttp.open('POST','http://localhost:8080/benabides/webServer/index.php', true);
+    var idNick = "nombre";
     var sr =
         '<soapenv:Envelope xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:coordenadaswsdl">'+
         '<soapenv:Header/>'+
