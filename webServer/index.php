@@ -2,47 +2,42 @@
 include("nusoap/nusoap.php");
 // Create the server instance
 $hosname        = "localhost";
-$baseDeDatos    = "wbe2service";
+$baseDeDatos    = "datosmoviles";
 $usuarioDB      = "root";
-$passwordDB     = "1nt3r4ct1v3";
-$tabla          = "users";
-$campoBusqueda  = "mail";
+$passwordDB     = "";
+$tabla          = "registos";
 $server = new soap_server();
 // Initialize WSDL support
-$server->configureWSDL('emailwsdl', 'urn:emailwsdl');
+$server->configureWSDL('coordenadaswsdl', 'urn:coordenadaswsdl');
 // Register the method to expose
-//$server->wsdl->addComplexType(
-//    'userInfo',
-//    'complextType',
-//    'struct',
-//    'sequence',
-//    '',
-//    array(
-//        'uid' => array('name' => 'uid', 'type' => 'xsd:string'),
-//        'mail' => array('name' => 'mail', 'type' => 'xsd:string'),
-//        'name' => array('name' => 'name', 'type' => 'xsd:string')
-//    )
-//);
+$server->wsdl->addComplexType(
+    'userInfo',
+    'complextType',
+    'struct',
+    'sequence',
+    '',
+ ['idNick' => ['name' => 'idNick', 'type' => 'xsd:string']
+]
+);
 
-$server->register('ValidarEmail',                // method name
+$server->register('guardarCoordenadas',                // method name
     //array('email' => 'xsd:string'),        // input parameters
-    array('id'=>'xsd:string','nombre'=>'xsd:string','email' => 'xsd:string'),
+    ['idNick'=>'xsd:string','longitud'=>'xsd:string','latitud' => 'xsd:string'],
     array('return' => 'tns:userInfo'),      // output parameters
-    'urn:emailwsdl',                      // namespace
-    'urn:emailwsdl#ValidarEmail',                // soapaction
+    'urn:coordenadaswsdl',                      // namespace
+    'urn:coordenadaswsdl#guardarCoordenadas',                // soapaction
     'rpc',                                // style
     'encoded',                            // use
     'Hola bienvenido'                     // documentation
 );
 
 // Define the method as a PHP function
-function ValidarEmail($id,$nombre,$email) {
+function guardarCoordenadas($idNick,$longitud,$latitud) {
   global $hosname;
   global $baseDeDatos;
   global $usuarioDB;
   global $passwordDB;
   global $tabla;
-  global $campoBusqueda;
   try{
 	$conn = new PDO("mysql:host=$hosname;dbname=$baseDeDatos", "$usuarioDB", "$passwordDB");
 	$conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -51,11 +46,11 @@ function ValidarEmail($id,$nombre,$email) {
   //$sql->execute(array('Email' => $email));
   //$resultado = $sql->rowCount();
   //INSERT
-  $nombres = explode(",", $nombre);
-  $cordenadas = explode(",", $email);
-  for($i=0;$i<count($nombres);$i++){    
-    $sql = $conn->prepare(" INSERT INTO users (uid,mail,name) VALUES (NULL,:Nombre ,:Email )");
-    $sql->execute(array('Nombre'=>$nombres[$i],'Email' => $cordenadas[$i]));
+  $longitudes = explode(",", $longitud);
+  $latitudes = explode(",", $latitud);
+  for($i=0;$i<count($longitud);$i++){    
+    $sql = $conn->prepare(" INSERT IGNORE INTO $tabla (id,idNick,longitud,latitud) VALUES (NULL,:idNick,:longitud ,:latitud )");
+    $sql->execute(array('idNick'=>$idNick,'longitud'=>$longitudes[$i],'latitud' => $latitudes[$i]));
   }
 	
   }catch(PDOException $e){
@@ -67,12 +62,8 @@ function ValidarEmail($id,$nombre,$email) {
      $datos = $sql->fetch(PDO::FETCH_ASSOC);
     return true;
   }*/
-  return true;
+  return ['name' => $idNick];
 }
-//function helloDonAndres($algo){
-//				return 'Hello, Don ' . $name;
-//}
 // Use the request to (try to) invoke the service
 $HTTP_RAW_POST_DATA = isset($HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : '';
 $server->service($HTTP_RAW_POST_DATA);
-?>
